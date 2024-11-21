@@ -1,0 +1,74 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define n 8
+int choice=0,top=-1,stack[n],i,j;
+void push();
+void pop();
+int peek();
+void display();
+int main(){
+    printf("---------------stack-----------------\n");
+            printf("1.push\n2.pop\n3.peek\n4.display\n5.exit\n");
+    while (choice!=6){
+        printf("enter the choice=\n");
+        scanf("%d",&choice);
+        switch(choice){
+            case 1:
+            push();
+            break;
+            case 2:
+            pop();
+            break;
+            case 3:
+            printf("top element is=%d\n",peek());
+            break;
+            case 4:
+            display();
+            break;
+            case 5:
+            exit(0);
+            break;
+            default:
+            printf("enter a valid choice..");
+        }
+    }
+}
+void push(){
+    if(top==n){
+        printf("overflow...");
+    }
+    else{
+        int item;
+        printf("enter item to be inserted=");
+        scanf("%d",&item);
+        top=top+1;  //top element shifts
+        stack[top]=item;
+        printf("element inserted\n");
+    }
+}
+void pop(){
+    if(top==-1){
+        printf("underflow...");
+    }
+    else{
+        top=top-1;  //top element deleted
+        printf("element deleted\n");
+    }
+}
+int peek(){
+    if(top==-1){
+        return printf("underflow...");
+    }
+    else{
+        return stack[top];
+    }
+}
+void display(){
+    int i;
+    for(i=top;i>=0;i--){
+        printf("%d\n",stack[i]);
+    }
+    if(top==-1){
+        printf("stack is empty");
+    }
+}

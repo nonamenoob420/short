@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 5
+
+int deque[MAX];
+int front = -1, rear = -1;
+
+// Insert element at the front of the deque
+void insertFront(int item) {
+    if (front == 0) {
+        printf("Overflow at front! Cannot insert.\n");
+        return;
+    } else if (front == -1) {  // Empty deque
+        front = rear = 0;
+    } else {
+        front--;
+    }
+    deque[front] = item;
+    printf("Inserted %d at front.\n", item);
+}
+
+// Insert element at the rear of the deque
+void insertRear(int item) {
+    if (rear == MAX - 1) {
+        printf("Overflow at rear! Cannot insert.\n");
+        return;
+    } else if (rear == -1) {  // Empty deque
+        front = rear = 0;
+    } else {
+        rear++;
+    }
+    deque[rear] = item;
+    printf("Inserted %d at rear.\n", item);
+}
+
+// Delete element from the front of the deque
+void deleteFront() {
+    if (front == -1) {
+        printf("Underflow! Deque is empty.\n");
+        return;
+    }
+    printf("Deleted %d from front.\n", deque[front]);
+    if (front == rear) {  // Only one element was in the deque
+        front = rear = -1;
+    } else {
+        front++;
+    }
+}
+
+// Delete element from the rear of the deque
+void deleteRear() {
+    if (rear == -1) {
+        printf("Underflow! Deque is empty.\n");
+        return;
+    }
+    printf("Deleted %d from rear.\n", deque[rear]);
+    if (front == rear) {  // Only one element was in the deque
+        front = rear = -1;
+    } else {
+        rear--;
+    }
+}
+
+// Display elements of the deque
+void display() {
+    if (front == -1) {
+        printf("Deque is empty.\n");
+        return;
+    }
+    printf("Deque elements: ");
+    for (int i = front; i <= rear; i++) {
+        printf("%d ", deque[i]);
+    }
+    printf("\n");
+}
+
+// Main function for menu-driven program
+int main() {
+    int choice, item;
+    while (1) {
+        printf("\n1. Insert Front\n2. Insert Rear\n3. Delete Front\n4. Delete Rear\n5. Display\n6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert at front: ");
+                scanf("%d", &item);
+                insertFront(item);
+                break;
+            case 2:
+                printf("Enter value to insert at rear: ");
+                scanf("%d", &item);
+                insertRear(item);
+                break;
+            case 3:
+                deleteFront();
+                break;
+            case 4:
+                deleteRear();
+                break;
+            case 5:
+                display();
+                break;
+            case 6:
+                exit(0);
+            default:
+                printf("Invalid choice, try again.\n");
+        }
+    }
+    return 0;
+}

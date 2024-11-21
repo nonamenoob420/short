@@ -1,0 +1,198 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    struct node *next;
+};
+
+void count(struct node *head) {
+    struct node *ptr = head;
+    int count = 0;
+    if (head == NULL) {
+        printf("underflow\n");
+        return;
+    } else {
+        do {
+            count++;
+            ptr = ptr->next;
+        } while (ptr != head);  // Line 17: Stop when back at head
+    }
+    printf("the count is = %d\n", count);
+}
+
+void print(struct node *head) {
+    struct node *ptr = head;
+    if (head == NULL) {
+        printf("Underflow\n");
+        return;
+    } else {
+        do {
+            printf("%d -> ", ptr->data);
+            ptr = ptr->next;
+        } while (ptr != head);  // Line 29: Stop when back at head
+        printf("HEAD\n");
+    }
+}
+
+struct node *insert_begin(struct node *head, int item) {
+    struct node *temp = (struct node *)malloc(sizeof(struct node));
+    if (temp == NULL) {
+        printf("memory allocation failed\n");
+    } else {
+        struct node *ptr = head;
+        temp->data = item;
+        temp->next = head;
+
+        if (head != NULL) {
+            while (ptr->next != head) {  // Line 42: Traverse to the last node
+                ptr = ptr->next;
+            }
+            ptr->next = temp;  // Link last node to new head (temp)
+        } else {
+            temp->next = temp;  // Line 46: Link new node to itself if list is empty
+        }
+        head = temp;
+    }
+    return head;
+}
+
+void insert_end(struct node *head, int item) {
+    struct node *temp = (struct node *)malloc(sizeof(struct node));
+    if (temp == NULL) {
+        printf("memory allocation failed\n");
+        return;
+    }
+    struct node *ptr = head;
+    temp->data = item;
+
+    if (head == NULL) {
+        temp->next = temp;  // Line 60: Make it circular if it's the only node
+        head = temp;
+    } else {
+        while (ptr->next != head) {  // Line 63: Traverse to the last node
+            ptr = ptr->next;
+        }
+        ptr->next = temp;
+        temp->next = head;  // Line 66: Make it circular by linking to head
+    }
+}
+
+void insert_random(struct node *head, int item, int pos) {
+    struct node *ptr = head;
+    struct node *temp = (struct node *)malloc(sizeof(struct node));
+    if (temp == NULL) {
+        printf("memory allocation failed\n");
+        return;
+    }
+    temp->data = item;
+
+    if (pos == 0) {
+        head = insert_begin(head, item);
+        return;
+    } else {
+        for (int i = 0; i < pos - 1 && ptr->next != head; i++) {  // Line 81: Traverse, stop if next is head
+            ptr = ptr->next;
+        }
+        if (ptr->next == head) {  // Line 84: Insert at the end if position is beyond current nodes
+            insert_end(head, item);
+        } else {
+            temp->next = ptr->next;
+            ptr->next = temp;
+        }
+    }
+}
+
+void delete_begin(struct node **head) {
+    struct node *ptr = *head;
+    if (*head == NULL) {
+        printf("list is empty\n");
+        return;
+    }
+
+    if (ptr->next == *head) {  // Line 96: Only one node in the list
+        free(ptr);
+        *head = NULL;
+    } else {
+        struct node *last = *head;
+        while (last->next != *head) {  // Line 100: Find the last node
+            last = last->next;
+        }
+        *head = ptr->next;
+        last->next = *head;  // Line 103: Update last node to new head
+        free(ptr);
+    }
+}
+
+void delete_end(struct node *head) {
+    if (head == NULL) {
+        printf("list is empty\n");
+        return;
+    }
+    struct node *ptr = head, *ptr1 = NULL;
+
+    if (head->next == head) {  // Line 113: Only one node in the list
+        free(head);
+        head = NULL;
+    } else {
+        while (ptr->next != head) {  // Line 117: Traverse to the last node
+            ptr1 = ptr;
+            ptr = ptr->next;
+        }
+        ptr1->next = head;  // Link second-last node to head
+        free(ptr);
+    }
+}
+
+void delete_random(struct node *head, int pos) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+    struct node *ptr = head, *ptr1 = NULL;
+
+    if (pos == 0) {
+        delete_begin(&head);
+        return;
+    } else {
+        for (int i = 0; i < pos && ptr->next != head; i++) {  // Line 131: Traverse until pos
+            ptr1 = ptr;
+            ptr = ptr->next;
+        }
+        if (ptr->next == head) {  // Line 134: Position out of bounds
+            printf("Position out of bounds\n");
+        } else {
+            ptr1->next = ptr->next;
+            free(ptr);
+        }
+    }
+}
+
+int main() {
+    struct node *head = NULL;
+    head = insert_begin(head, 1);
+    head = insert_begin(head, 2);
+    head = insert_begin(head, 3);
+
+    int item = 5;
+    int item2 = 10;
+    int pos = 2;
+    int item3 = 9;
+
+    count(head);
+    print(head);
+    head = insert_begin(head, item);
+    insert_end(head, item2);
+    print(head);
+    insert_random(head, item3, pos);
+    print(head);
+    delete_begin(&head);
+    print(head);
+    delete_end(head);
+    print(head);
+    int loc = 2;
+    delete_random(head, loc);
+    print(head);
+
+    return 0;
+}

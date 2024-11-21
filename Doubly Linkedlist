@@ -1,0 +1,230 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node {
+    int data;
+    struct node *next;
+    struct node *prev;
+};
+
+void count(struct node *head) {
+    struct node* ptr = head;
+    int count = 0;
+
+    if (head == NULL) {
+        printf("Underflow\n");
+        return;
+    } else {
+        while (ptr != NULL) {
+            count++;
+            ptr = ptr->next;
+        }
+    }
+    printf("The count is = %d\n", count);
+}
+
+void print(struct node* head) {
+    struct node* ptr = head;
+
+    if (head == NULL) {
+        printf("Underflow\n");
+        return;
+    } else {
+        while (ptr != NULL) {
+            printf("%d <-> ", ptr->data);
+            ptr = ptr->next;
+        }
+        printf("NULL\n");
+    }
+}
+
+struct node* insert_begin(struct node* head, int item) {
+    struct node* temp = (struct node*)malloc(sizeof(struct node));
+    if (temp == NULL) {
+        printf("Memory allocation failed\n");
+        return head;
+    }
+    temp->data = item;
+    temp->next = head;
+    temp->prev = NULL;
+
+    if (head != NULL) {
+        head->prev = temp;
+    }
+    head = temp;
+
+    return head;
+}
+
+void insert_end(struct node* head, int item) {
+    struct node* temp = (struct node*)malloc(sizeof(struct node));
+    struct node* ptr = head;
+
+    if (temp == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    temp->data = item;
+    temp->next = NULL;
+
+    if (head == NULL) {
+        temp->prev = NULL;
+        head = temp;
+        return;
+    }
+
+    while (ptr->next != NULL) {
+        ptr = ptr->next;
+    }
+    ptr->next = temp;
+    temp->prev = ptr;
+}
+
+void insert_random(struct node* head, int item, int pos) {
+    struct node* ptr = head;
+    struct node* temp = (struct node*)malloc(sizeof(struct node));
+
+    if (temp == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    if (pos == 0) {
+        printf("Use insert_begin for position 0\n");
+        free(temp);
+        return;
+    }
+
+    for (int i = 0; i < pos - 1 && ptr != NULL; i++) {
+        ptr = ptr->next;
+    }
+
+    if (ptr == NULL) {
+        printf("Position out of bounds\n");
+        free(temp);
+        return;
+    }
+
+    temp->data = item;
+    temp->next = ptr->next;
+    temp->prev = ptr;
+
+    if (ptr->next != NULL) {
+        ptr->next->prev = temp;
+    }
+
+    ptr->next = temp;
+}
+
+struct node* delete_begin(struct node* head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return NULL;
+    }
+
+    struct node* temp = head;
+    head = head->next;
+
+    if (head != NULL) {
+        head->prev = NULL;
+    }
+
+    free(temp);
+    return head;
+}
+
+void delete_end(struct node* head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct node* ptr = head;
+    while (ptr->next != NULL) {
+        ptr = ptr->next;
+    }
+
+    if (ptr->prev != NULL) {
+        ptr->prev->next = NULL;
+    } else {
+        head = NULL;
+    }
+
+    free(ptr);
+}
+
+void delete_random(struct node* head, int pos) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct node* ptr = head;
+
+    for (int i = 0; i < pos && ptr != NULL; i++) {
+        ptr = ptr->next;
+    }
+
+    if (ptr == NULL) {
+        printf("Position out of bounds\n");
+        return;
+    }
+
+    if (ptr->prev != NULL) {
+        ptr->prev->next = ptr->next;
+    }
+
+    if (ptr->next != NULL) {
+        ptr->next->prev = ptr->prev;
+    }
+
+    free(ptr);
+}
+
+int main() {
+    struct node* head = NULL;
+
+    head = (struct node*)malloc(sizeof(struct node));
+    struct node* current1 = (struct node*)malloc(sizeof(struct node));
+    struct node* current2 = (struct node*)malloc(sizeof(struct node));
+
+    head->data = 1;
+    head->next = current1;
+    head->prev = NULL;
+
+    current1->data = 2;
+    current1->next = current2;
+    current1->prev = head;
+
+    current2->data = 3;
+    current2->next = NULL;
+    current2->prev = current1;
+
+    int item = 5;
+    int item2 = 10;
+    int pos = 2;
+    int item3 = 9;
+
+    count(head);
+    print(head);
+
+    head = insert_begin(head, item);
+    insert_end(head, item2);
+    print(head);
+
+    insert_random(head, item3, pos);
+    print(head);
+
+    head = delete_begin(head);
+    print(head);
+
+    delete_end(head);
+    print(head);
+
+    int loc = 2;
+    delete_random(head, loc);
+    print(head);
+
+    return 0;
+}
