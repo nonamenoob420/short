@@ -1,0 +1,58 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node {
+    int data;
+    struct node* next;
+};
+
+struct queue {
+    struct node* front;
+    struct node* rear;
+};
+
+struct queue* enqueue(struct queue* q, int item) {
+    struct node* temp = (struct node*)malloc(sizeof(struct node));
+    temp->data = item;
+    temp->next = NULL;
+    if (q->rear == NULL) {
+        q->front = q->rear = temp;
+        return q;
+    }
+    q->rear->next = temp;
+    q->rear = temp;
+    return q;
+}
+
+struct queue* dequeue(struct queue* q) {
+    if (q->front == NULL) {
+        printf("Underflow\n");
+        return q;
+    }
+    struct node* temp = q->front;
+    q->front = q->front->next;
+    if (q->front == NULL) q->rear = NULL;
+    free(temp);
+    return q;
+}
+
+void display_queue(struct queue* q) {
+    struct node* ptr = q->front;
+    while (ptr != NULL) {
+        printf("%d->", ptr->data);
+        ptr = ptr->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct queue* q = (struct queue*)malloc(sizeof(struct queue));
+    q->front = q->rear = NULL;
+    q = enqueue(q, 10);
+    q = enqueue(q, 20);
+    q = enqueue(q, 30);
+    display_queue(q);
+    q = dequeue(q);
+    display_queue(q);
+    return 0;
+}
